@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  mysql:
+    container_name: bbdd-empresa-sql
+    image: mysql:latest
+    ports:
+      - "3306:3306"    
+    volumes:
+      - mysql-datos:/var/lib/mysql
+    env_file: mysql.env
+    restart: unless-stopped
+  web:
+    container_name: candidatos
+    image: app-candidatos:3.0.0
+    build:
+      context: .
+      dockerfile: candidatos.Dockerfile
+      target: app
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    volumes:
+      - webapp-datos:/usr/local/tomcat/webapps/gestion-candidatos/fotos
+    env_file: web.env
+    restart: unless-stopped
+    
+volumes:
+  mysql-datos:
+  webapp-datos:
