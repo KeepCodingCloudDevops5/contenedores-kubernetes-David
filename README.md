@@ -966,8 +966,23 @@ DB_URL=jdbc:mysql://bbdd-empresa-sql:3306/empresa?serverTimezone=Europe/Madrid
 
 ### A continuación se aportan las capturas de pantalla con los pasos para hacer funcionar la App:
 
+1. Se comprueba que se disponen de los requisitos necesarios para realizar el despliegue en local a través de Docker:  
+![Skeleto directorios](./capturas/docker_version.png)
+
+2. Desde el directorio donde se encuentra el fichero docker-compose.yml ejecutar el siguiente comando para desplegar la App:    
+  `$ docker-compose up`
+![Docker Compose](./capturas/docker-compose-up.png)
 
 
+3. Una vez pasados unos minutos se comprueba que el despliegue de los contenedores Docker se ha llevado a cabo y están levantados correctamente y en servicio:    
+![Docker ps](./capturas/docker-ps.png)
+
+4. Para comprobar el funcionamiento de la App, es necesario abrir la siguiente url en un navegador y se visualizará el menú principal de la aplicación:
+**`http://localhost:8080/gestion-candidatos`**  
+![App menu](./capturas/app-menu.png)
+
+5. Se comprueba que al hacer click en la opción **Ver candidatos**, se puede visualizar el único candidato registrado hasta el momento:    
+![App lista](./capturas/app-listado.png)
 
 
 
