@@ -7,10 +7,8 @@ services:
     ports:
       - "3306:3306"    
     volumes:
-      - mysql-dato:/var/lib/mysql
-      - ../backup/bbdd_empresa.sql:/var/lib/mysql/bbdd_empresa.sql:ro
+      - mysql-data:/var/lib/mysql
     env_file: mysql.env
-    command: mysql -u root -p $MYSQL_ROOT_PASSWORD --default-character-set=utf8 -D empresa < /var/lib/mysql/bbdd_empresa.sql -f
     restart: unless-stopped
   web:
     container_name: candidatos
@@ -24,7 +22,10 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - webapp-datos:/usr/local/tomcat/webapps/gestion-candidatos/fotos
+      - webapp-data:/usr/local/tomcat/webapps/gestion-candidatos/fotos
+      - "$PWD/../backup/bbdd_empresa.sql:/mysql/bbdd_empresa.sql:ro"
+      - "$PWD/scripts/bootstrap.sh:/usr/local/tomcat/webapps/gestion-candidatos/scripts/bootstrap.sh"
+      - "$PWD/scripts/script_variables.sh:/usr/local/tomcat/webapps/gestion-candidatos/scripts/script_variables.sh"
     env_file: web.env
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
@@ -35,5 +36,5 @@ services:
     restart: unless-stopped
     
 volumes:
-  mysql-dato:
-  webapp-datos:
+  mysql-data:
+  webapp-data:

@@ -21,10 +21,10 @@ USE `empresa`;
 -- Table structure for table `candidatos`
 --
 
-DROP TABLE IF EXISTS `candidatos`;
+/*DROP TABLE IF EXISTS `candidatos` */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `candidatos` (
+CREATE TABLE IF NOT EXISTS `candidatos` (
   `idCandidato` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(45) COLLATE utf8_spanish_ci DEFAULT NULL,
   `edad` int DEFAULT NULL,
@@ -41,6 +41,6 @@ CREATE TABLE `candidatos` (
 
 LOCK TABLES `candidatos` WRITE;
 /*!40000 ALTER TABLE `candidatos` DISABLE KEYS */;
-INSERT INTO `candidatos` VALUES (35,'Pepe',20,'Jardinero','fotopepe.png','pepeluis@gmail.com'),(54,'DavidJapo',21,'Ingeniero de Angular','javaroadmap_2020.png','davidjapo@angular.com'),(55,'Axel',22,'Capataz','javaroadmap_2020.png','axel@capatazx.es');
+/*INSERT INTO `candidatos` VALUES (1,'test',0,'test','test.png','test@test.test') */;
 /*!40000 ALTER TABLE `candidatos` ENABLE KEYS */;
 UNLOCK TABLES;
