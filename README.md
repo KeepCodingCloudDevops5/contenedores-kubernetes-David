@@ -989,7 +989,7 @@ DB_URL=jdbc:mysql://bbdd-empresa-sql:3306/empresa?serverTimezone=Europe/Madrid
 6. Al hacer click en la **opción 'Nuevo candidato'**, se muestra la página con un pequeño formulario para cumplimentar los datos del candidato nuevo y al darle al botón Guardar, el servlet FrontController recoge la petición y llama al servlet encargado de darle el alta en la BBDD:  
 ![App alta](./capturas/app-alta.png)
 
-7. Se comprueba que al hacer click en la opción **Ver candidatos**, se puede visualizar el único candidato registrado hasta el momento, tras darlo de altra en el paso anterior:  
+7. Se comprueba que al hacer click en la opción **Ver candidatos**, se puede visualizar el único candidato registrado hasta el momento, tras darlo de alta en el paso anterior:  
 ![App lista](./capturas/app-listado.png)
 
     - Nos conectamos al contenedor de la App para comprobar como la BBDD contiene tuplas, ejecutando los siguientes comandos:  
@@ -998,6 +998,10 @@ DB_URL=jdbc:mysql://bbdd-empresa-sql:3306/empresa?serverTimezone=Europe/Madrid
   **`SELECT * FROM candidatos;`**
 ![bbdd llena](./capturas/bbdd-llena.png)
 
+	- Se comprueba que el fichero de la foto del candidato registrado se encuentra almacenado en el sistema de ficheros del contenedor, ejecutando los siguientes comandos:  
+  **`docker exec -it candidatos bash`**  
+  **`ls -la fotos/`**  
+![foto](./capturas/docker-fotos.png)	
 
 8. Si se hace click en la **opción 'Eliminar por e-mail'**, se puede observar una página con un campo de texto solicitando introducir la dirección de e-mail del candidato a Eliminar.  
 ![app eliminar](./capturas/app-eliminar.png)
