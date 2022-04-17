@@ -966,27 +966,41 @@ DB_URL=jdbc:mysql://bbdd-empresa-sql:3306/empresa?serverTimezone=Europe/Madrid
 
 ### A continuación se aportan las capturas de pantalla con los pasos para hacer funcionar la App:
 
-1. Se comprueba que se disponen de los requisitos necesarios para realizar el despliegue en local a través de Docker:  
+1. Se comprueba que se disponen de los requisitos necesarios para realizar el despliegue en local a través de Docker ejecutando los comandos:  
+  **`$ docker --version && docker-compose version`**  
 ![Skeleto directorios](./capturas/docker_version.png)
 
 2. Desde el directorio donde se encuentra el fichero docker-compose.yml ejecutar el siguiente comando para desplegar la App:    
-  `$ docker-compose up`
+  **`$ ls docker-compose.yml && docker-compose up`**
 ![Docker Compose](./capturas/docker-compose-up.png)
 
 
-3. Una vez pasados unos minutos se comprueba que el despliegue de los contenedores Docker se ha llevado a cabo y están levantados correctamente y en servicio:    
+3. Un par de minutos después, se comprueba que el despliegue de los contenedores Docker se ha llevado a cabo y están levantados correctamente y en servicio, ejecutando los comandos:  
+  **`$ docker-compose ps && docker ps`**    
 ![Docker ps](./capturas/docker-ps.png)
 
 4. Para comprobar el funcionamiento de la App, es necesario abrir la siguiente url en un navegador y se visualizará el menú principal de la aplicación:
-**`http://localhost:8080/gestion-candidatos`**  
+[**http://localhost:8080/gestion-candidatos**](http://localhost:8080/gestion-candidatos)  
 ![App menu](./capturas/app-menu.png)
 
-5. Se comprueba que al hacer click en la opción **Ver candidatos**, se puede visualizar el único candidato registrado hasta el momento:    
+5. Se comprueba que al hacer click en la opción **Ver candidatos**, muestra una página con un mensaje indicando que la base de datos no contiene candidatos registrados:  
+![App lista](./capturas/app-vacia.png)
+
+6. Al hacer click en la **opción 'Nuevo candidato'**, se muestra la página con un pequeño formulario para cumplimentar los datos del candidato nuevo y al darle al botón Guardar, el servlet FrontController recoge la petición y llama al servlet encargado de darle el alta en la BBDD:  
+![App alta](./capturas/app-alta.png)
+
+7. Se comprueba que al hacer click en la opción **Ver candidatos**, se puede visualizar el único candidato registrado hasta el momento, tras darlo de altra en el paso anterior:  
 ![App lista](./capturas/app-listado.png)
 
+    - Nos conectamos al contenedor de la App para comprobar como la BBDD contiene tuplas, ejecutando los siguientes comandos:  
+  **`docker exec -it candidatos bash`**  
+  **`mysql -u root -p$DB_PASS -h $DB_SERVER -P $DB_PORT -D empresa`**  
+  **`SELECT * FROM candidatos;`**
+![bbdd llena](./capturas/bbdd-llena.png)
 
 
-- Instrucciones para desplegarla en Kubernetes (incluyendo requerimientos, dependencias, tipos de Kubernetes soportados, etc):
-	+ ...
+8. Si se hace click en la **opción 'Eliminar por e-mail'**, se puede observar una página con un campo de texto solicitando introducir la dirección de e-mail del candidato a Eliminar.  
+![app eliminar](./capturas/app-eliminar.png)
 
 
+<br>

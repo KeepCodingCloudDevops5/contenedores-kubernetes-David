@@ -28,7 +28,7 @@ services:
       - "$PWD/scripts/script_variables.sh:/usr/local/tomcat/webapps/gestion-candidatos/scripts/script_variables.sh"
     env_file: web.env
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/gestion-candidatos"]
       interval: 1m30s
       timeout: 10s
       retries: 3
