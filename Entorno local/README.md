@@ -238,7 +238,7 @@ DB_URL=jdbc:mysql://bbdd-empresa-sql:3306/empresa?serverTimezone=Europe/Madrid
     - Nos conectamos al contenedor de la App para comprobar como la BBDD contiene tuplas, ejecutando los siguientes comandos:  
   **`docker exec -it candidatos bash`**  
   **`mysql -u root -p$DB_PASS -h $DB_SERVER -P $DB_PORT -D empresa`**  
-  **`SELECT * FROM candidatos;`**
+  **`SELECT * FROM candidatos;`**  
 ![bbdd llena](./capturas/bbdd-llena.png)
 
 	- Se comprueba que el fichero de la foto del candidato registrado se encuentra almacenado en el sistema de ficheros del contenedor, ejecutando los siguientes comandos:  

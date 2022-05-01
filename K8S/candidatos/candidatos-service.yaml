@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: acme-candidatos
+  namespace: acme
+spec:
+  type: NodePort
+  selector:
+    app: acme-candidatos
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8080
+      nodePort: 30000
+      protocol: TCP

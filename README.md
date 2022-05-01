@@ -6,7 +6,6 @@
 
 * [Entorno Local](./Entorno%20local#readme)
 * [Entorno K8S](./K8S#readme)
-* [Entorno Monitorización](./monitoring#readme)
 
 <br>
 

@@ -1,0 +1,44 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: acme-bbdd
+  namespace: acme
+spec: 
+  selector:
+    matchLabels:
+      app: mysql
+  replicas: 1 
+  template:
+    metadata:
+      name: acme-bbdd
+      namespace: acme
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: bbdd-empresa-sql
+          image: mysql:latest
+          envFrom:
+            - configMapRef:
+                name: acme-bbdd-sql
+            - secretRef:
+                name: acme-bbdd
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          workingDir: /var/lib/mysql
+          ports:
+            - containerPort: 3306
+          livenessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 40
+            periodSeconds: 90
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+      restartPolicy: Always      
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-data  
