@@ -535,4 +535,4 @@ kubectl -n acme create secret generic acme-bbdd \
 
 2)  Para forzar el autoescalado, se procede a inyectar tráfico a la web, haciendo uso de la herramienta ab de Apache2-utils, creando un pod manualmente:  
 
-`kubectl run test-carga -it --rm --image=ubuntu/apache2 --command -- sh -c 'ab -n 500000 -c 1000 -s 50 http://acme-candidatos:8000/gestion-candidatos'`
+`kubectl -n acme run test-carga -it --rm --image=ubuntu/apache2 --command -- sh -c 'ab -n 500000 -c 1000 -s 50 http://acme-candidatos:8000/gestion-candidatos'`
