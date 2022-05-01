@@ -530,3 +530,9 @@ kubectl -n acme create secret generic acme-bbdd \
   Teniendo en cuenta el tipo de hardware que corre sobre el cluster, he definido únicamente un máximo de 2 réplicas.
 
 `kubectl -n acme autoscale deployment acme-candidatos --min=1 --max=2 --cpu-percent=70`
+
+<br>
+
+2)  Para forzar el autoescalado, se procede a inyectar tráfico a la web, haciendo uso de la herramienta ab de Apache2-utils, creando un pod manualmente:  
+
+`kubectl run test-carga -it --rm --image=ubuntu/apache2 --command -- sh -c 'ab -n 500000 -c 1000 -s 50 http://acme-candidatos:8000/gestion-candidatos'`
