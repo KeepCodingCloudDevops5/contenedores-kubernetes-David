@@ -211,7 +211,7 @@ DB_URL=jdbc:mysql://bbdd-empresa-sql:3306/empresa?serverTimezone=Europe/Madrid
 
 1. Se comprueba que se disponen de los requisitos necesarios para realizar el despliegue en local a través de Docker ejecutando los comandos:  
   **`$ docker --version && docker-compose version`**  
-![Skeleto directorios](./capturas/docker_version.png)
+![Docker Version](./capturas/docker_version.png)
 
 2. Desde el directorio donde se encuentra el fichero docker-compose.yml ejecutar el siguiente comando para desplegar la App:    
   **`$ ls docker-compose.yml && docker-compose up`**

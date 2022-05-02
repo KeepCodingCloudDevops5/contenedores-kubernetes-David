@@ -1,4 +1,4 @@
-# Bootcamp DevOps V - Contenedores, más que VMs - David De la Cruz
+# Bootcamp DevOps V - Contenedores y Kubernetes - David De la Cruz
 
 ## Descripción de los recursos creados (Generación de manifests de Kubernetes):
 
@@ -15,12 +15,12 @@
 <a name="deployments"></a>
 ### Deployments:
 
-1)  Se define en un manifest en formato YAML la creación del WorkLoad Deployment correspondiente a la Base de Datos:  
-    Este manifiesto creará un objeto Deployment en el namespace acme con nombre acme-bbdd que consta de:
+1)  Se define en un manifest en formato YAML la creación del WorkLoad **Deployment correspondiente a la Base de Datos**:  
+    Este manifiesto creará un objeto Deployment en el **namespace acme** con nombre acme-bbdd que consta de:
       - 1 Réplica
-      - Imagen del contenedor será MySQL
-      - Escuchará en el puerto TCP 3306
-      - Persistencia de datos permanente para salvaguardar los datos de la BBDD.
+      - La imagen del contenedor será MySQL
+      - El servidode la BBDD escuchará en el puerto TCP 3306
+      - Persistencia de datos permanente para salvaguardar los datos de la BBDD (PVC).
 
 **bbdd-deployment.yaml**
 
@@ -73,16 +73,16 @@ spec:
 
 <br>
 
-2)  Se define en un manifest en formato YAML la creación del WorkLoad Deployment correspondiente a la aplicación web:  
+2)  Se define en un manifest en formato YAML la creación del WorkLoad **Deployment correspondiente a la aplicación web**:  
     Este manifiesto creará un objeto Deployment en el namespace acme con nombre acme-bbdd que consta de:
       - 1 Réplica
-      - Afinidad de preferencia a Pods con label app: mysql para estar cerca del nodo donde está la BBDD corriendo.
-      - AntiAfinidad de requerimiento a Pods con label app: acme-candidatos para separar las réplicas de la App en nodos distintos.
+      - Afinidad de preferencia a Pods con label **app: mysql** para estar cerca del nodo donde está la BBDD corriendo.
+      - AntiAfinidad de requerimiento a Pods con label **app: acme-candidatos** para separar las réplicas de la App en nodos distintos.
       - 2 InitContainers:
-          Uno para la compilación de la App por parte de Maven.
-          Otro para la carga del schema de la BBDD con un cliente de MySql.
-      - Persistencia de datos permanente para almacenar las fotos de los candidatos (en GCP).
-      - La App correrá en el contenedor principal con una imagen de Tomcat, escuchando en el puerto 8080.       
+          Uno para la compilación de la App Java por parte de Maven.
+          Otro para la carga del schema de la BBDD con un cliente de MySQL.
+      - Persistencia de datos permanente para almacenar las fotos de los candidatos (en un disco de GCP).
+      - La App correrá en el contenedor principal con una imagen de Tomcat, escuchando en el puerto 8080.  
 
 **candidatos-deployment.yaml**
 
@@ -301,8 +301,8 @@ spec:
 
 1)  Se define a través de la CLI, la creación de un objeto ConfigMap para ser usado por la BBDD, con origen un archivo de propiedades, cuya Key será cada propiedad de dicho archivo:  
 
-  La única propiedad declarada corresponde al nombre de la BBDD a crear por el asistente de la imagen MySQL en su ejecución.
-  Este ConfigMap será utilizado para la creación de las variables de entorno del contenedor, importando los datos desde este configMap.
+    La única propiedad declarada corresponde al nombre de la BBDD a crear por el asistente de la imagen MySQL en su ejecución.  
+    Este ConfigMap será utilizado para la creación de las variables de entorno del contenedor, importando los datos desde este configMap.
 
 `kubectl -n acme create configmap acme-bbdd-sql --from-env-file=resources/bbdd.properties`
 
@@ -318,7 +318,7 @@ MYSQL_DATABASE=empresa
 
 2)  Se define la creación de un ConfigMap para ser usado por la App, con origen un archivo de propiedades, cuya Key será cada propiedad de dicho archivo:
 
-   Este ConfigMap será utilizado para la creación de las variables de entorno del contenedor, importando los datos desde este configMap.
+     Este ConfigMap será utilizado para la creación de las variables de entorno del contenedor, importando los datos desde este configMap.
 
 `kubectl -n acme create configmap acme-app-candidatos --from-env-file=resources/app.properties`
 
@@ -397,9 +397,10 @@ UNLOCK TABLES;
 
 <br>
 
-4)  Se define la creación de un ConfigMap que contienen los ficheros de los scripts de la App, para ser utilizado por el InitContainer de la compilación de la App Java:  
+4)  Se define la creación de un ConfigMap que contienen los ficheros de los scripts de la App, para ser utilizado por el InitContainer de la compilación de la App Java:
 
-  El script de configuración de variables, permite dotar de configurabilidad a la App, realizando la sustitución de valores antes de la compilación del programa. Para ello se hace uso del paquete *envsubst* de Linux para manipular textos.
+     El script de configuración de variables, permite dotar de configurabilidad a la App, realizando la sustitución de valores antes de la compilación del programa.  
+     Para ello se hace uso del comando *envsubst* de Linux para extracción de textos.
 
 `kubectl -n acme create configmap acme-scripts --from-file=scripts/bootstrap.sh --from-file=scripts/script_variables.sh`
 
@@ -456,7 +457,7 @@ exit 0
 #
 #  1.- CLONAR EL REPOSITORIO QUE CONTIENE EL CODIGO FUENTE DE LA APP.
 #
-#  2.- INSTALAR PAQUETERÍA NECESARIA PARA MANIPULAR TEXTOS EN LA SHELL.
+#  2.- INSTALAR PAQUETERÍA NECESARIA PARA EXTRACCIÓN DE TEXTOS EN LA SHELL.
 #
 #  3.- EJECUTAR EL SCRIPT QUE REALIZA EL CAMBIO DE VARIABLES PARA LA PERSISTENCIA DE LA APP JAVA.
 #
@@ -468,7 +469,7 @@ exit 0
 until
  git clone $REPO_GITHUB /app_java_temp
 do 
- echo Esperando a clonar el respositorio de GitHub...
+ echo Esperando a clonar el repositorio de GitHub...
  sleep 2
 done
  apt update
@@ -487,9 +488,9 @@ exit 0
 <a name="secrets"></a>
 ### Como generar los secrets:
 
-1)  Se define la creación de un secret literal para los secretos de la BBDD:  
+1)  Se define la creación de un secret literal para los **secretos de la BBDD**:
 
-  Este secret será cargado como variables de entorno en el contenedor.
+    Este secret será cargado como variables de entorno en el contenedor.
 
 ```
 kubectl -n acme create secret generic acme-bbdd \
@@ -499,9 +500,11 @@ kubectl -n acme create secret generic acme-bbdd \
 --from-literal=MYSQL_PASSWORD=<pass>
 ```
 
-2)  Se define la creación de un secret literal para los secretos de la APP:  
+<br>
 
-  Este secret será cargado como variables de entorno en el contenedor.
+2)  Se define la creación de un secret literal para los **secretos de la APP**:
+
+    Este secret será cargado como variables de entorno en el contenedor.
 
 `kubectl -n acme create secret generic acme-candidatos --from-literal=DB_USER=<user> --from-literal=DB_PASS=<pass>`
 
@@ -510,29 +513,87 @@ kubectl -n acme create secret generic acme-bbdd \
 <a name="affinity"></a>
 ### Afinidad:
 
-1)  Asegurar que los PODs de la base de datos y la aplicación permanezcan lo más juntos posibles al desplegarse en Kubernetes:  
+1)  Asegurar que los PODs de la base de datos y la aplicación permanezcan lo más juntos posibles al desplegarse en Kubernetes:
 
-  He configurado una regla de Afinidad de Pod para que el scheduling de los Pods de la APP se creen de *preferencia* en el mismo nodo donde se encuentren Pods con la etiqueta de mysql.
+    He configurado una regla de Afinidad de Pod para que el scheduling de los Pods de la APP se creen de *preferencia* en el mismo nodo donde se encuentren Pods con la etiqueta de mysql.
 
 <br>
 
-2)  Asegurar que los PODs de las réplicas de la aplicación permanezcan lo más separados posibles:  
+2)  Asegurar que los PODs de las réplicas de la aplicación permanezcan lo más separados posibles:
 
-  He configurado una regla de AnfiAfinidad de Pod para que el scheduling de las réplicas de los Pods de la App NO se creen de *requerimiento* en el mismo nodo donde ya existan Pods con la etiqueta de la App acme-candidatos.
+    He configurado una regla de AnfiAfinidad de Pod para que el scheduling de las réplicas de los Pods de la App NO se creen de *requerimiento* en el mismo nodo donde ya existan Pods con la etiqueta de la App acme-candidatos.
   
 <br>
 
 <a name="hpa"></a>
 ### Autoescalado:
 
-1)  Autoescalar la aplicación (no la base de datos) cuando pase de un umbral de uso de CPU del 70%, asegurando siempre una alta disponibilidad:  
+1)  Autoescalar la aplicación (no la base de datos) cuando pase de un umbral de uso de CPU del 70%, asegurando siempre una alta disponibilidad:
 
-  Teniendo en cuenta el tipo de hardware que corre sobre el cluster, he definido únicamente un máximo de 2 réplicas.
+    Teniendo en cuenta el tipo de hardware que corre sobre el cluster, he definido únicamente un máximo de **2 réplicas**.
 
 `kubectl -n acme autoscale deployment acme-candidatos --min=1 --max=2 --cpu-percent=70`
 
 <br>
 
-2)  Para forzar el autoescalado, se procede a inyectar tráfico a la web, haciendo uso de la herramienta ab de Apache2-utils, creando un pod manualmente:  
+2)  Para forzar el autoescalado, se procede a **inyectar tráfico** a la web, haciendo uso de la herramienta **ab de Apache2-utils**, creando un pod manualmente:  
 
-`kubectl -n acme run test-carga -it --rm --image=ubuntu/apache2 --command -- sh -c 'ab -n 500000 -c 1000 -s 50 http://acme-candidatos:8000/gestion-candidatos'`
+```
+kubectl -n acme run test-carga \
+-it --rm --image=ubuntu/apache2 \
+--command -- sh -c 'ab -n 500000 -c 1000 -s 50 http://acme-candidatos:8000/gestion-candidatos'
+```
+
+<br>
+
+<a name="logs"></a>
+### Logs:
+
+1)  Asegurarse de que todos los componentes (aplicación y base de datos) mandan sus logs por la salida estándar y salida de error (STDOUT / STDERR):
+
+    Se comprueba que el servidor de aplicaciones Tomcat manda los logs por STDOUT y STDERR:
+
+`kubectl logs acme-candidatos-5cd44d9899-xl8g4`
+
+```
+NOTE: Picked up JDK_JAVA_OPTIONS:  --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+01-May-2022 20:51:34.309 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/9.0.62
+01-May-2022 20:51:34.320 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Mar 31 2022 14:34:15 UTC
+01-May-2022 20:51:34.321 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 9.0.62.0
+01-May-2022 20:51:34.322 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+01-May-2022 20:51:34.322 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            5.4.170+
+01-May-2022 20:51:34.323 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          amd64
+01-May-2022 20:51:34.324 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /opt/java/openjdk
+01-May-2022 20:51:34.325 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           11.0.15+10
+01-May-2022 20:51:34.325 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Eclipse Adoptium
+01-May-2022 20:51:34.326 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /usr/local/tomcat
+```
+
+<br>
+
+
+    Se comprueba accediendo al pod, que los logs de la aplicación también se mandan a fichero:
+
+`kubectl exec -it acme-candidatos-5cd44d9899-xl8g4 -- ls -la /usr/local/tomcat/logs/catalina.2022-05-01.log`
+
+```
+Defaulted container "javaee" out of: javaee, init-java-compilation (init), init-carga-datos-sql (init)
+-rw-r----- 1 root root 9224 May  1 22:24 /usr/local/tomcat/logs/catalina.2022-05-01.log
+```    
+
+<br>
+
+    Se comprueba que el servidor de base de datos MySQL manda los logs por STDOUT y STDERR:
+
+`kubectl logs acme-bbdd-758cb545f7-vwt7x `
+
+```
+2022-05-01 20:48:48+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.29-1debian10 started.
+2022-05-01 20:48:48+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+2022-05-01 20:48:48+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.29-1debian10 started.
+2022-05-01 20:48:49+00:00 [Note] [Entrypoint]: Initializing database files
+2022-05-01T20:48:49.063516Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.29) initializing of server in progress as process 41
+2022-05-01T20:48:50.188441Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+```
+
+<br>

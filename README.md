@@ -523,7 +523,7 @@ public class FrontController extends HttpServlet {
 
 A continuación se muestra una captura de pantalla con la estructura de directorios y ficheros de la App.
 
-![alt text](./Entorno local/capturas/esqueleto_directorios_app.png)
+![Skeleto directorios](./Entorno%20local/capturas/esqueleto_directorios_app.png)
 
 <br>
 
